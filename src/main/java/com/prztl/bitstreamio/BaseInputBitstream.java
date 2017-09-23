@@ -22,44 +22,15 @@
  */
 package com.prztl.bitstreamio;
 
-import java.io.ByteArrayInputStream;
-
-class BaseInputBitstream extends Bitstream
+abstract class BaseInputBitstream extends Bitstream
 {
-	private ByteArrayInputStream in;
-	private byte b;
-	private int pos = 8;
 	
-	private int compressedBitsRead; //the number of bits written
 	
-	protected BaseInputBitstream(ByteArrayInputStream in)
-	{
-		this.in = in;
-	}
+	protected int compressedBitsRead; //the number of bits read via compressed methods
 	
 	public int getCompressedBitsRead() { return compressedBitsRead; }
 	
-	private boolean readBit()
-	{
-		//do we need to read the next byte?
-		if( pos == 8 )
-		{
-			int data = in.read();
-			if( data == -1 )
-			{
-				b = 0;
-			}
-			else
-			{
-				b = (byte)data;
-			}
-			
-			pos = 0;
-		}
-		
-		//get the byte
-		return Bits.get(b, pos++);
-	}
+	protected abstract boolean readBit();
 	
 	public boolean readBoolean()
 	{
@@ -210,5 +181,23 @@ class BaseInputBitstream extends Bitstream
 		
 		//convert to a double and return
 		return Double.longBitsToDouble(l);
+	}
+	
+	public byte readByte() { return readByte(8); }
+	public short readShort() { return readShort(16); }
+	public int readInt() { return readInt(32); }
+	public long readLong() { return readLong(64); }
+	public float readFloat() { return readFloat(true, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS); }
+	public double readDouble() { return readDouble(true, DOUBLE_MAX_EXPONENT_BITS, DOUBLE_MAX_MANTISSA_BITS); }
+	
+	public double readAngle()
+	{
+		return (double)readFloat(false, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS);
+	}
+	
+	public <E extends Enum<?>> E readEnum(E[] values)
+	{
+		int ord = readInt( Bits.bitsNeeded( values.length ) );
+		return values[ord];
 	}
 }

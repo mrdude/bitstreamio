@@ -22,45 +22,18 @@
  */
 package com.prztl.bitstreamio;
 
-import java.io.ByteArrayOutputStream;
-
-class BaseOutputBitstream extends Bitstream
+abstract class BaseOutputBitstream extends Bitstream
 {
-	private ByteArrayOutputStream out = new ByteArrayOutputStream();
-	private byte b; //the byte we are writing to
-	private int pos; //the position in the byte
-	
 	private int compressedBitsWritten; //the number of bits written
 	
 	public int getCompressedBitsWritten() { return compressedBitsWritten; }
 	
 	/**
-	 * Flushes the current byte.
-	 */
-	private void flush()
-	{
-		out.write(b);
-		b = 0;
-		pos = 0;
-	}
-	
-	/**
 	 * Packs the bits into a byte array and returns it.
 	 */
-	public byte[] toByteArray()
-	{
-		if( pos != 0 ) { flush(); }
-		return out.toByteArray();
-	}
+	public abstract byte[] toByteArray();
 	
-	private void writeBit(boolean bit)
-	{
-		b = Bits.set(b, pos, bit);
-		pos++;
-		
-		//flush the byte
-		if( pos == 8 ) { flush(); }
-	}
+	protected abstract void writeBit(boolean bit);
 	
 	public void writeBoolean(boolean b)
 	{
@@ -176,6 +149,33 @@ class BaseOutputBitstream extends Bitstream
 		{
 			writeBit( Bits.get(l, x) );
 		}
+	}
+	
+	public void writeByte(byte b) { writeByte( b, 8 ); }
+	public void writeShort(short s) { writeShort( s, 16 ); }
+	public void writeInt(int i) { writeInt( i, 32 ); }
+	public void writeLong(long l) { writeLong( l, 64 ); }
+	public void writeFloat(float f) { writeFloat( f, true, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS ); }
+	public void writeDouble(double d) { writeDouble( d, true, DOUBLE_MAX_EXPONENT_BITS, DOUBLE_MAX_MANTISSA_BITS ); }
+	
+	private double normalizeRadianAngle(double ang)
+	{
+		ang %= 2 * Math.PI;
+		if( ang < 0 )
+			ang += 2 * Math.PI;
+		
+		return ang;
+	}
+	
+	public void writeAngle(double ang)
+	{
+		ang = normalizeRadianAngle(ang);
+		writeFloat( (float)ang, true, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS);
+	}
+	
+	public <E extends Enum<?>> void writeEnum(E e, E[] values)
+	{
+		writeInt( e.ordinal(), Bits.bitsNeeded( values.length ) );
 	}
 	
 }

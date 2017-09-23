@@ -26,25 +26,37 @@ import java.io.ByteArrayInputStream;
 
 public class InputBitstream extends BaseInputBitstream
 {
-	public InputBitstream(ByteArrayInputStream in) { super(in); }
+	private ByteArrayInputStream in;
+	private byte b;
+	private int pos = 8;
+	
+	public InputBitstream(ByteArrayInputStream in)
+	{
+		this.in = in;
+	}
 	public InputBitstream(byte[] b, int off, int len) { this( new ByteArrayInputStream( b, off, len ) ); }
 	public InputBitstream(byte[] b) { this( new ByteArrayInputStream(b) ); }
-
-	public byte readByte() { return readByte(8); }
-	public short readShort() { return readShort(16); }
-	public int readInt() { return readInt(32); }
-	public long readLong() { return readLong(64); }
-	public float readFloat() { return readFloat(true, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS); }
-	public double readDouble() { return readDouble(true, DOUBLE_MAX_EXPONENT_BITS, DOUBLE_MAX_MANTISSA_BITS); }
 	
-	public double readAngle()
+	@Override
+	protected boolean readBit()
 	{
-		return (double)readFloat(false, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS);
-	}
-
-	public <E extends Enum<?>> E readEnum(E[] values)
-	{
-		int ord = readInt( Bits.bitsNeeded( values.length ) );
-		return values[ord];
+		//do we need to read the next byte?
+		if( pos == 8 )
+		{
+			int data = in.read();
+			if( data == -1 )
+			{
+				b = 0;
+			}
+			else
+			{
+				b = (byte)data;
+			}
+			
+			pos = 0;
+		}
+		
+		//get the byte
+		return Bits.get(b, pos++);
 	}
 }
