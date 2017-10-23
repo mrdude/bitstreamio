@@ -24,17 +24,20 @@ package com.prztl.bitstreamio;
 
 abstract class AbstractInputBitstream extends Bitstream
 {
+	private int compressedBitsRead; //the number of bits read via compressed methods
 	
+	public final int getCompressedBitsRead() { return compressedBitsRead; }
 	
-	protected int compressedBitsRead; //the number of bits read via compressed methods
-	
-	public int getCompressedBitsRead() { return compressedBitsRead; }
+	protected final void incrementCompressedBitsCounter(int amount)
+	{
+		compressedBitsRead += amount;
+	}
 	
 	protected abstract boolean readBit();
 	
 	public boolean readBoolean()
 	{
-		compressedBitsRead += 1;
+		incrementCompressedBitsCounter(1);
 		return readBit();
 	}
 	
@@ -43,7 +46,7 @@ abstract class AbstractInputBitstream extends Bitstream
 	 */
 	public byte readByte(int bits)
 	{
-		compressedBitsRead += bits;
+		incrementCompressedBitsCounter(bits);
 		
 		byte b = 0;
 		
@@ -60,7 +63,7 @@ abstract class AbstractInputBitstream extends Bitstream
 	 */
 	public short readShort(int bits)
 	{
-		compressedBitsRead += bits;
+		incrementCompressedBitsCounter(bits);
 		
 		short b = 0;
 		
@@ -77,7 +80,7 @@ abstract class AbstractInputBitstream extends Bitstream
 	 */
 	public int readInt(int bits)
 	{
-		compressedBitsRead += bits;
+		incrementCompressedBitsCounter(bits);
 		
 		int b = 0;
 		
@@ -91,7 +94,7 @@ abstract class AbstractInputBitstream extends Bitstream
 	
 	public int readInt(int bits, boolean signBit)
 	{
-		compressedBitsRead += bits;
+		incrementCompressedBitsCounter(bits);
 		if( signBit ) { bits++; }
 		
 		int b = 0;
@@ -112,7 +115,7 @@ abstract class AbstractInputBitstream extends Bitstream
 	 */
 	public long readLong(int bits)
 	{
-		compressedBitsRead += bits;
+		incrementCompressedBitsCounter(bits);
 		
 		long b = 0;
 		
@@ -128,7 +131,7 @@ abstract class AbstractInputBitstream extends Bitstream
 	@Deprecated
 	public float readFloat(boolean signBit, int exponentBits, int mantissaBits)
 	{
-		compressedBitsRead += (signBit ? 1 : 0) + exponentBits + mantissaBits;
+		incrementCompressedBitsCounter((signBit ? 1 : 0) + exponentBits + mantissaBits);
 		
 		//create an int
 		int i = 0;
@@ -157,7 +160,7 @@ abstract class AbstractInputBitstream extends Bitstream
 	
 	public double readDouble(boolean signBit, int exponentBits, int mantissaBits)
 	{
-		compressedBitsRead += (signBit ? 1 : 0) + exponentBits + mantissaBits;
+		incrementCompressedBitsCounter((signBit ? 1 : 0) + exponentBits + mantissaBits);
 		
 		//create a long
 		long l = 0;

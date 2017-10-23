@@ -26,7 +26,12 @@ abstract class AbstractOutputBitstream extends Bitstream
 {
 	private int compressedBitsWritten; //the number of bits written
 	
-	public int getCompressedBitsWritten() { return compressedBitsWritten; }
+	public final int getCompressedBitsWritten() { return compressedBitsWritten; }
+	
+	protected final void incrementCompressedBitsCounter(int amount)
+	{
+		compressedBitsWritten += amount;
+	}
 	
 	/**
 	 * Packs the bits into a byte array and returns it.
@@ -37,7 +42,7 @@ abstract class AbstractOutputBitstream extends Bitstream
 	
 	public void writeBoolean(boolean b)
 	{
-		compressedBitsWritten += 1;
+		incrementCompressedBitsCounter(1);
 		writeBit(b);
 	}
 	
@@ -46,7 +51,7 @@ abstract class AbstractOutputBitstream extends Bitstream
 	 */
 	public void writeByte(byte b, int bits)
 	{
-		compressedBitsWritten += bits;
+		incrementCompressedBitsCounter(bits);
 		
 		for( int x=0; x<Math.min(8,bits); x++ )
 		{
@@ -56,7 +61,7 @@ abstract class AbstractOutputBitstream extends Bitstream
 	
 	public void writeShort(short b, int bits)
 	{
-		compressedBitsWritten += bits;
+		incrementCompressedBitsCounter(bits);
 		
 		for( int x=0; x<Math.min(16,bits); x++ )
 		{
@@ -66,7 +71,7 @@ abstract class AbstractOutputBitstream extends Bitstream
 	
 	public void writeInt(int b, int bits)
 	{
-		compressedBitsWritten += bits;
+		incrementCompressedBitsCounter(bits);
 		
 		for( int x=0; x<Math.min(32,bits); x++ )
 		{
@@ -76,7 +81,7 @@ abstract class AbstractOutputBitstream extends Bitstream
 	
 	public void writeInt(int b, int bits, boolean signBit)
 	{
-		compressedBitsWritten += bits;
+		incrementCompressedBitsCounter(bits);
 		if( signBit ) { bits++; }
 		
 		for( int x=0; x<Math.min(32,bits); x++ )
@@ -90,7 +95,7 @@ abstract class AbstractOutputBitstream extends Bitstream
 	
 	public void writeLong(long b, int bits)
 	{
-		compressedBitsWritten += bits;
+		incrementCompressedBitsCounter(bits);
 		
 		for( int x=0; x<Math.min(64,bits); x++ )
 		{
