@@ -24,18 +24,18 @@ package com.prztl.bitstreamio;
 
 import java.io.ByteArrayInputStream;
 
-public class InputBitstream extends AbstractInputBitstream
+public class BaseInputBitstream extends AbstractInputBitstream
 {
 	private ByteArrayInputStream in;
 	private byte b;
 	private int pos = 8;
 	
-	public InputBitstream(ByteArrayInputStream in)
+	public BaseInputBitstream(ByteArrayInputStream in)
 	{
 		this.in = in;
 	}
-	public InputBitstream(byte[] b, int off, int len) { this(new ByteArrayInputStream(b, off, len ) ); }
-	public InputBitstream(byte[] b) { this(new ByteArrayInputStream(b) ); }
+	public BaseInputBitstream(byte[] b, int off, int len) { this(new ByteArrayInputStream(b, off, len ) ); }
+	public BaseInputBitstream(byte[] b) { this(new ByteArrayInputStream(b) ); }
 	
 	@Override
 	protected boolean readBit()
