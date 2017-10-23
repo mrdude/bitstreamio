@@ -125,6 +125,7 @@ abstract class BaseInputBitstream extends Bitstream
 	}
 	
 	//Untested
+	@Deprecated
 	public float readFloat(boolean signBit, int exponentBits, int mantissaBits)
 	{
 		compressedBitsRead += (signBit ? 1 : 0) + exponentBits + mantissaBits;
@@ -187,7 +188,7 @@ abstract class BaseInputBitstream extends Bitstream
 	public short readShort() { return readShort(16); }
 	public int readInt() { return readInt(32); }
 	public long readLong() { return readLong(64); }
-	public float readFloat() { return readFloat(true, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS); }
+	@Deprecated public float readFloat() { return readFloat(true, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS); }
 	public double readDouble() { return readDouble(true, DOUBLE_MAX_EXPONENT_BITS, DOUBLE_MAX_MANTISSA_BITS); }
 	
 	public double readAngle()
