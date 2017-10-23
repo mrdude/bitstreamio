@@ -24,7 +24,7 @@ package com.prztl.bitstreamio;
 
 import java.io.ByteArrayInputStream;
 
-public class InputBitstream extends BaseInputBitstream
+public class InputBitstream extends AbstractInputBitstream
 {
 	private ByteArrayInputStream in;
 	private byte b;
@@ -34,8 +34,8 @@ public class InputBitstream extends BaseInputBitstream
 	{
 		this.in = in;
 	}
-	public InputBitstream(byte[] b, int off, int len) { this( new ByteArrayInputStream( b, off, len ) ); }
-	public InputBitstream(byte[] b) { this( new ByteArrayInputStream(b) ); }
+	public InputBitstream(byte[] b, int off, int len) { this(new ByteArrayInputStream(b, off, len ) ); }
+	public InputBitstream(byte[] b) { this(new ByteArrayInputStream(b) ); }
 	
 	@Override
 	protected boolean readBit()

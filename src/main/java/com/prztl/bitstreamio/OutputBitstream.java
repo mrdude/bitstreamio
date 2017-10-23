@@ -24,7 +24,7 @@ package com.prztl.bitstreamio;
 
 import java.io.ByteArrayOutputStream;
 
-public class OutputBitstream extends BaseOutputBitstream
+public class OutputBitstream extends AbstractOutputBitstream
 {
 	private ByteArrayOutputStream out = new ByteArrayOutputStream();
 	private byte b; //the byte we are writing to

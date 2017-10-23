@@ -22,7 +22,7 @@
  */
 package com.prztl.bitstreamio;
 
-abstract class BaseInputBitstream extends Bitstream
+abstract class AbstractInputBitstream extends Bitstream
 {
 	
 	
