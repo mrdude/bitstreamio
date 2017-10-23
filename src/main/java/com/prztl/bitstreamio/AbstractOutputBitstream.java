@@ -107,7 +107,7 @@ abstract class AbstractOutputBitstream extends Bitstream
 	@Deprecated
 	public void writeFloat(float f, boolean signBit, int exponentBits, int mantissaBits)
 	{
-		compressedBitsWritten += (signBit ? 1 : 0) + exponentBits + mantissaBits;
+		incrementCompressedBitsCounter((signBit ? 1 : 0) + exponentBits + mantissaBits);
 		
 		//convert to an int
 		int i = Float.floatToIntBits(f);
@@ -133,7 +133,7 @@ abstract class AbstractOutputBitstream extends Bitstream
 	
 	public void writeDouble(double d, boolean signBit, int exponentBits, int mantissaBits)
 	{
-		compressedBitsWritten += (signBit ? 1 : 0) + exponentBits + mantissaBits;
+		incrementCompressedBitsCounter((signBit ? 1 : 0) + exponentBits + mantissaBits);
 		
 		//convert to a long
 		long l = Double.doubleToLongBits( d );
@@ -184,4 +184,27 @@ abstract class AbstractOutputBitstream extends Bitstream
 		writeInt( e.ordinal(), Bits.bitsNeeded( values.length ) );
 	}
 	
+	/**
+	 * Writes a "quantized" double.
+	 * @param value the value to write
+	 * @param maxAbsInteger The integral (a.k.a. the non-decimal part) of the value is expected to be between [-maxAbsInteger, maxAbsInteger]
+	 * @param decimalPlaces The number of decimal places to preserve
+	 */
+	public void writeQDouble(double value, int maxAbsInteger, int decimalPlaces)
+	{
+		assert maxAbsInteger > 0;
+		
+		final int integral = (int)Math.abs(value);
+		final double decimal = Math.abs(value) - (double)integral;
+		
+		//write the sign bit
+		writeBit(value < 0);
+		
+		//write the integral part
+		writeInt(integral, Bits.bitsNeeded(maxAbsInteger));
+		
+		//write the decimal part
+		final long decimalMultiplier = (long)Math.pow(10, decimalPlaces);
+		writeLong((long)(decimal * decimalMultiplier), Bits.bitsNeeded(decimalMultiplier));
+	}
 }

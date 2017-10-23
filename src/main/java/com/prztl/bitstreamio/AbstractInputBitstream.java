@@ -204,4 +204,28 @@ abstract class AbstractInputBitstream extends Bitstream
 		int ord = readInt( Bits.bitsNeeded( values.length ) );
 		return values[ord];
 	}
+	
+	/**
+	 * Reads a "quantized" double.
+	 * @param maxAbsInteger The integral (a.k.a. the non-decimal part) of the value is expected to be between [-maxAbsInteger, maxAbsInteger]
+	 * @param decimalPlaces The number of decimal places to preserve
+	 * @return the value
+	 */
+	public double readQDouble(int maxAbsInteger, int decimalPlaces)
+	{
+		assert maxAbsInteger > 0;
+		
+		//write the sign bit
+		final boolean signBit = readBit();
+		
+		//write the integral part
+		final int integral = readInt(Bits.bitsNeeded(maxAbsInteger));
+		
+		//write the decimal part
+		final long decimalMultiplier = (long)Math.pow(10, decimalPlaces);
+		final long scaledDecimal = readLong(Bits.bitsNeeded(decimalMultiplier));
+		final double decimal = scaledDecimal / (double)decimalMultiplier;
+		
+		return (signBit ? -1.0 : 1.0) * ((double)integral+decimal);
+	}
 }
