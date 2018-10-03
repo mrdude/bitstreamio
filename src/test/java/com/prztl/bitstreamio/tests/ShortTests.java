@@ -5,21 +5,30 @@ import com.prztl.bitstreamio.BaseOutputBitstream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.IntStream;
 
 public class ShortTests
 {
-	@Test
-	public void testBits()
+	private static final int maxBits = 16;
+	
+	@ParameterizedTest
+	@MethodSource("bitsSource")
+	public void testBits(int bits)
 	{
-		for(int bits = 1; bits < 15; bits++)
+		if(bits < maxBits)
 		{
 			final long maxValue = Utils.pow2(bits);
-			for( short value = 0; value < maxValue; value++ )
+			for( short value = 0; value >= 0 && value < maxValue; value++ )
 				testValue(value, bits);
 		}
-		
-		for(short value = Short.MIN_VALUE; value < Short.MAX_VALUE; value++)
-			testValue(value, 16);
+		else
+		{
+			for( short value = Short.MIN_VALUE; value < Short.MAX_VALUE; value++ )
+				testValue(value, 16);
+		}
 	}
 	
 	@Test
@@ -41,7 +50,7 @@ public class ShortTests
 			@Override
 			public void execute() throws Throwable
 			{
-				testValue((short)5, 17);
+				testValue((short)5, maxBits+1);
 			}
 		});
 	}
@@ -56,5 +65,10 @@ public class ShortTests
 		final short actualValue = in.readShort(bits);
 		
 		Assertions.assertEquals(value, actualValue, "expected: " +value+ ", actualValue: " +actualValue+ ", bits: " +bits);
+	}
+	
+	static IntStream bitsSource()
+	{
+		return IntStream.range(1, maxBits);
 	}
 }
