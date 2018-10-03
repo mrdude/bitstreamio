@@ -157,13 +157,6 @@ abstract class AbstractOutputBitstream extends Bitstream
 		}
 	}
 	
-	public void writeByte(byte b) { writeByte( b, 8 ); }
-	public void writeShort(short s) { writeShort( s, 16 ); }
-	public void writeInt(int i) { writeInt( i, 32 ); }
-	public void writeLong(long l) { writeLong( l, 64 ); }
-	@Deprecated public void writeFloat(float f) { writeFloat( f, true, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS ); }
-	public void writeDouble(double d) { writeDouble( d, true, DOUBLE_MAX_EXPONENT_BITS, DOUBLE_MAX_MANTISSA_BITS ); }
-	
 	private double normalizeRadianAngle(double ang)
 	{
 		ang %= 2 * Math.PI;

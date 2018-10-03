@@ -187,13 +187,6 @@ abstract class AbstractInputBitstream extends Bitstream
 		return Double.longBitsToDouble(l);
 	}
 	
-	public byte readByte() { return readByte(8); }
-	public short readShort() { return readShort(16); }
-	public int readInt() { return readInt(32); }
-	public long readLong() { return readLong(64); }
-	@Deprecated public float readFloat() { return readFloat(true, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS); }
-	public double readDouble() { return readDouble(true, DOUBLE_MAX_EXPONENT_BITS, DOUBLE_MAX_MANTISSA_BITS); }
-	
 	public double readAngle()
 	{
 		return (double)readFloat(false, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS);
