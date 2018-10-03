@@ -59,4 +59,9 @@ public class BaseOutputBitstream extends AbstractOutputBitstream
 		//flush the byte
 		if( pos == 8 ) { flush(); }
 	}
+	
+	public <E extends Enum<?>> void writeEnum(E e, E[] values)
+	{
+		writeInt( e.ordinal(), Bits.bitsNeeded( values.length ) );
+	}
 }

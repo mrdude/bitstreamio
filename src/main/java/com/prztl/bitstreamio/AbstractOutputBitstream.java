@@ -114,26 +114,6 @@ abstract class AbstractOutputBitstream extends Bitstream
 			writeBit( Bits.get(l, x) );
 	}
 	
-	private double normalizeRadianAngle(double ang)
-	{
-		ang %= 2 * Math.PI;
-		if( ang < 0 )
-			ang += 2 * Math.PI;
-		
-		return ang;
-	}
-	
-	public void writeAngle(double ang)
-	{
-		ang = normalizeRadianAngle(ang);
-		writeDouble( ang, false, DOUBLE_MAX_EXPONENT_BITS, DOUBLE_MAX_MANTISSA_BITS);
-	}
-	
-	public <E extends Enum<?>> void writeEnum(E e, E[] values)
-	{
-		writeInt( e.ordinal(), Bits.bitsNeeded( values.length ) );
-	}
-	
 	/**
 	 * Writes a "split" double -- one with the integral and decimal parts written separately as integers.
 	 * @param value the value to write

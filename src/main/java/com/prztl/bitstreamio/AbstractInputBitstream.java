@@ -133,17 +133,6 @@ abstract class AbstractInputBitstream extends Bitstream
 		return Double.longBitsToDouble(l);
 	}
 	
-	public double readAngle()
-	{
-		return readDouble(false, DOUBLE_MAX_EXPONENT_BITS, DOUBLE_MAX_MANTISSA_BITS);
-	}
-	
-	public <E extends Enum<?>> E readEnum(E[] values)
-	{
-		int ord = readInt( Bits.bitsNeeded( values.length ) );
-		return values[ord];
-	}
-	
 	/**
 	 * Reads a "split" double -- one with the integral and decimal parts written separately as integers.
 	 * @param maxAbsInteger The integral (a.k.a. the non-decimal part) of the value is expected to be between [-maxAbsInteger, maxAbsInteger]

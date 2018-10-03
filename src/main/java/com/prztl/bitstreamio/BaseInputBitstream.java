@@ -59,4 +59,10 @@ public class BaseInputBitstream extends AbstractInputBitstream
 		//get the byte
 		return Bits.get(b, pos++);
 	}
+	
+	public <E extends Enum<?>> E readEnum(E[] values)
+	{
+		int ord = readInt( Bits.bitsNeeded( values.length ) );
+		return values[ord];
+	}
 }
