@@ -24,9 +24,9 @@ package com.prztl.bitstreamio;
 
 abstract class AbstractInputBitstream extends Bitstream
 {
-	private int compressedBitsRead; //the number of bits read via compressed methods
+	private long compressedBitsRead; //the number of bits read via compressed methods
 	
-	public final int getCompressedBitsRead() { return compressedBitsRead; }
+	public final long getCompressedBitsRead() { return compressedBitsRead; }
 	
 	protected final void incrementCompressedBitsCounter(int amount)
 	{

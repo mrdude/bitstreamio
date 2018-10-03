@@ -24,9 +24,9 @@ package com.prztl.bitstreamio;
 
 abstract class AbstractOutputBitstream extends Bitstream
 {
-	private int compressedBitsWritten; //the number of bits written
+	private long compressedBitsWritten; //the number of bits written
 	
-	public final int getCompressedBitsWritten() { return compressedBitsWritten; }
+	public final long getCompressedBitsWritten() { return compressedBitsWritten; }
 	
 	protected final void incrementCompressedBitsCounter(int amount)
 	{
