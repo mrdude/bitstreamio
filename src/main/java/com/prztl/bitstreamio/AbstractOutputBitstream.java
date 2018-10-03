@@ -33,11 +33,6 @@ abstract class AbstractOutputBitstream extends Bitstream
 		compressedBitsWritten += amount;
 	}
 	
-	/**
-	 * Packs the bits into a byte array and returns it.
-	 */
-	public abstract byte[] toByteArray();
-	
 	protected abstract void writeBit(boolean bit);
 	
 	public void writeBoolean(boolean b)
