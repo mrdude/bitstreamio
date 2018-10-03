@@ -46,88 +46,56 @@ abstract class AbstractOutputBitstream extends Bitstream
 	 */
 	public void writeByte(byte b, int bits)
 	{
+		checkBits(bits, 8);
 		incrementCompressedBitsCounter(bits);
 		
-		for( int x=0; x<Math.min(8,bits); x++ )
-		{
+		for( int x = 0; x < bits; x++ )
 			writeBit( Bits.get(b, x) );
-		}
 	}
 	
 	public void writeShort(short b, int bits)
 	{
+		checkBits(bits, 8);
 		incrementCompressedBitsCounter(bits);
 		
-		for( int x=0; x<Math.min(16,bits); x++ )
-		{
+		for( int x = 0; x < bits; x++ )
 			writeBit( Bits.get(b, x) );
-		}
 	}
 	
 	public void writeInt(int b, int bits)
 	{
+		checkBits(bits, 32);
 		incrementCompressedBitsCounter(bits);
 		
-		for( int x=0; x<Math.min(32,bits); x++ )
-		{
+		for( int x = 0; x < bits; x++ )
 			writeBit( Bits.get(b, x) );
-		}
 	}
 	
-	public void writeInt(int b, int bits, boolean signBit)
+	public void writePositiveInt(int b, int bits)
 	{
+		checkBits(bits, 31);
+		if(b < 0)
+			throw new RuntimeException("expected positive int, actual: " +b);
+		
 		incrementCompressedBitsCounter(bits);
-		if( signBit ) { bits++; }
 		
-		for( int x=0; x<Math.min(32,bits); x++ )
-		{
+		for( int x = 0; x < bits; x++ )
 			writeBit( Bits.get(b, x) );
-		}
-		
-		//write the sign bit last
-		if( signBit ) { writeBit( Bits.get(b, 31) ); }
 	}
 	
 	public void writeLong(long b, int bits)
 	{
+		checkBits(bits, 64);
 		incrementCompressedBitsCounter(bits);
 		
-		for( int x=0; x<Math.min(64,bits); x++ )
-		{
+		for( int x = 0; x < bits; x++ )
 			writeBit( Bits.get(b, x) );
-		}
-	}
-	
-	//Untested
-	@Deprecated
-	public void writeFloat(float f, boolean signBit, int exponentBits, int mantissaBits)
-	{
-		incrementCompressedBitsCounter((signBit ? 1 : 0) + exponentBits + mantissaBits);
-		
-		//convert to an int
-		int i = Float.floatToIntBits(f);
-		
-		//write the sign bit
-		if( signBit )
-		{
-			writeBit( Bits.get(i, 31) );
-		}
-		
-		//write the exponent bits
-		for( int x=0; x<exponentBits; x++ )
-		{
-			writeBit( Bits.get(i, 23 + x) );
-		}
-		
-		//write the mantissa bits
-		for( int x=0; x<mantissaBits; x++ )
-		{
-			writeBit( Bits.get(i, x) );
-		}
 	}
 	
 	public void writeDouble(double d, boolean signBit, int exponentBits, int mantissaBits)
 	{
+		checkBits(exponentBits, DOUBLE_MAX_EXPONENT_BITS);
+		checkBits(mantissaBits, DOUBLE_MAX_MANTISSA_BITS);
 		incrementCompressedBitsCounter((signBit ? 1 : 0) + exponentBits + mantissaBits);
 		
 		//convert to a long
@@ -135,21 +103,15 @@ abstract class AbstractOutputBitstream extends Bitstream
 		
 		//write the sign bit
 		if( signBit )
-		{
 			writeBit( Bits.get(l, 63) );
-		}
 		
 		//write the exponent bits
-		for( int x=0; x<exponentBits; x++ )
-		{
+		for( int x = 0; x < exponentBits; x++ )
 			writeBit( Bits.get(l, 52 + x) );
-		}
 		
 		//write the mantissa bits
-		for( int x=0; x<mantissaBits; x++ )
-		{
+		for( int x = 0; x < mantissaBits; x++ )
 			writeBit( Bits.get(l, x) );
-		}
 	}
 	
 	private double normalizeRadianAngle(double ang)
@@ -164,7 +126,7 @@ abstract class AbstractOutputBitstream extends Bitstream
 	public void writeAngle(double ang)
 	{
 		ang = normalizeRadianAngle(ang);
-		writeFloat( (float)ang, true, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS);
+		writeDouble( ang, false, DOUBLE_MAX_EXPONENT_BITS, DOUBLE_MAX_MANTISSA_BITS);
 	}
 	
 	public <E extends Enum<?>> void writeEnum(E e, E[] values)

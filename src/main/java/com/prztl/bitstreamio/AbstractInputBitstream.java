@@ -46,15 +46,12 @@ abstract class AbstractInputBitstream extends Bitstream
 	 */
 	public byte readByte(int bits)
 	{
+		checkBits(bits, 8);
 		incrementCompressedBitsCounter(bits);
 		
 		byte b = 0;
-		
-		for( int x=0; x<Math.min(8, bits); x++ )
-		{
+		for( int x = 0 ; x < bits; x++ )
 			b = Bits.set(b, x, readBit());
-		}
-		
 		return b;
 	}
 	
@@ -63,15 +60,12 @@ abstract class AbstractInputBitstream extends Bitstream
 	 */
 	public short readShort(int bits)
 	{
+		checkBits(bits, 16);
 		incrementCompressedBitsCounter(bits);
 		
 		short b = 0;
-		
-		for( int x=0; x<Math.min(16, bits); x++ )
-		{
+		for( int x = 0; x < bits; x++ )
 			b = Bits.set(b, x, readBit());
-		}
-		
 		return b;
 	}
 	
@@ -80,33 +74,23 @@ abstract class AbstractInputBitstream extends Bitstream
 	 */
 	public int readInt(int bits)
 	{
+		checkBits(bits, 32);
 		incrementCompressedBitsCounter(bits);
 		
 		int b = 0;
-		
-		for( int x=0; x<Math.min(32, bits); x++ )
-		{
+		for( int x = 0; x < bits; x++ )
 			b = Bits.set(b, x, readBit());
-		}
-		
 		return b;
 	}
 	
-	public int readInt(int bits, boolean signBit)
+	public int readPositiveInt(int bits)
 	{
+		checkBits(bits, 31);
 		incrementCompressedBitsCounter(bits);
-		if( signBit ) { bits++; }
 		
 		int b = 0;
-		
-		for( int x=0; x<Math.min(32, bits); x++ )
-		{
+		for( int x = 0; x < bits; x++ )
 			b = Bits.set(b, x, readBit());
-		}
-		
-		//read the sign bit
-		if( signBit ) { b = Bits.set(b, 31, readBit()); }
-		
 		return b;
 	}
 	
@@ -115,51 +99,19 @@ abstract class AbstractInputBitstream extends Bitstream
 	 */
 	public long readLong(int bits)
 	{
+		checkBits(bits, 64);
 		incrementCompressedBitsCounter(bits);
 		
 		long b = 0;
-		
-		for( int x=0; x<Math.min(64, bits); x++ )
-		{
+		for( int x = 0; x < bits; x++ )
 			b = Bits.set(b, x, readBit());
-		}
-		
 		return b;
-	}
-	
-	//Untested
-	@Deprecated
-	public float readFloat(boolean signBit, int exponentBits, int mantissaBits)
-	{
-		incrementCompressedBitsCounter((signBit ? 1 : 0) + exponentBits + mantissaBits);
-		
-		//create an int
-		int i = 0;
-		
-		//read the sign bit
-		if( signBit )
-		{
-			i = Bits.set(i, 31, readBit());
-		}
-		
-		//read the exponent bits
-		for( int x=0; x<exponentBits; x++ )
-		{
-			i = Bits.set(i, 23 + x, readBit());
-		}
-		
-		//read the mantissa bits
-		for( int x=0; x<mantissaBits; x++ )
-		{
-			i = Bits.set(i, x, readBit());
-		}
-		
-		//convert to a float and return
-		return Float.intBitsToFloat(i);
 	}
 	
 	public double readDouble(boolean signBit, int exponentBits, int mantissaBits)
 	{
+		checkBits(exponentBits, DOUBLE_MAX_EXPONENT_BITS);
+		checkBits(mantissaBits, DOUBLE_MAX_MANTISSA_BITS);
 		incrementCompressedBitsCounter((signBit ? 1 : 0) + exponentBits + mantissaBits);
 		
 		//create a long
@@ -167,21 +119,15 @@ abstract class AbstractInputBitstream extends Bitstream
 		
 		//read the sign bit
 		if( signBit )
-		{
 			l = Bits.set(l, 63, readBit());
-		}
 		
 		//read the exponent bits
-		for( int x=0; x<exponentBits; x++ )
-		{
+		for( int x = 0; x < exponentBits; x++ )
 			l = Bits.set(l, 52 + x, readBit());
-		}
 		
 		//read the mantissa bits
-		for( int x=0; x<mantissaBits; x++ )
-		{
+		for( int x = 0; x < mantissaBits; x++ )
 			l = Bits.set(l, x, readBit());
-		}
 		
 		//convert to a double and return
 		return Double.longBitsToDouble(l);
@@ -189,7 +135,7 @@ abstract class AbstractInputBitstream extends Bitstream
 	
 	public double readAngle()
 	{
-		return (double)readFloat(false, FLOAT_MAX_EXPONENT_BITS, FLOAT_MAX_MANTISSA_BITS);
+		return readDouble(false, DOUBLE_MAX_EXPONENT_BITS, DOUBLE_MAX_MANTISSA_BITS);
 	}
 	
 	public <E extends Enum<?>> E readEnum(E[] values)

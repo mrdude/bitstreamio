@@ -29,4 +29,10 @@ public abstract class Bitstream
 
 	public static final int DOUBLE_MAX_EXPONENT_BITS = 11;
 	public static final int DOUBLE_MAX_MANTISSA_BITS = 52;
+	
+	protected void checkBits(int bits, int maxBits)
+	{
+		if(bits <= 0 || bits > maxBits)
+			throw new RuntimeException("bits out of range -- actual: " +bits+ ", expected: 0 <= bits <= " +maxBits);
+	}
 }
