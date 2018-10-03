@@ -50,7 +50,7 @@ abstract class AbstractInputBitstream extends Bitstream
 		incrementCompressedBitsCounter(bits);
 		
 		byte b = 0;
-		for( int x = 0 ; x < bits; x++ )
+		for( int x = 0; x < bits; x++ )
 			b = Bits.set(b, x, readBit());
 		return b;
 	}
