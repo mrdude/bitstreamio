@@ -206,12 +206,12 @@ abstract class AbstractInputBitstream extends Bitstream
 	}
 	
 	/**
-	 * Reads a "quantized" double.
+	 * Reads a "split" double -- one with the integral and decimal parts written separately as integers.
 	 * @param maxAbsInteger The integral (a.k.a. the non-decimal part) of the value is expected to be between [-maxAbsInteger, maxAbsInteger]
 	 * @param decimalPlaces The number of decimal places to preserve
 	 * @return the value
 	 */
-	public double readQDouble(int maxAbsInteger, int decimalPlaces)
+	public double readSplitDouble(int maxAbsInteger, int decimalPlaces)
 	{
 		assert maxAbsInteger > 0;
 		

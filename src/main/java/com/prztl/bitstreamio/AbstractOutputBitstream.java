@@ -185,12 +185,12 @@ abstract class AbstractOutputBitstream extends Bitstream
 	}
 	
 	/**
-	 * Writes a "quantized" double.
+	 * Writes a "split" double -- one with the integral and decimal parts written separately as integers.
 	 * @param value the value to write
 	 * @param maxAbsInteger The integral (a.k.a. the non-decimal part) of the value is expected to be between [-maxAbsInteger, maxAbsInteger]
 	 * @param decimalPlaces The number of decimal places to preserve
 	 */
-	public void writeQDouble(double value, int maxAbsInteger, int decimalPlaces)
+	public void writeSplitDouble(double value, int maxAbsInteger, int decimalPlaces)
 	{
 		assert maxAbsInteger > 0;
 		
