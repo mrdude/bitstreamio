@@ -108,6 +108,26 @@ abstract class AbstractInputBitstream extends Bitstream
 		return b;
 	}
 	
+	public long readVLong(int groupSize)
+	{
+		if(groupSize <= 0 || groupSize > 64)
+			throw new RuntimeException("groupSize out of range -- must be 0 <= groupSize < 64, was " +groupSize);
+		
+		long value = 0;
+		int pos = 0;
+		while(true)
+		{
+			for(int group = 0; group < groupSize; group++)
+				value = Bits.set(value, pos++, readBit());
+			
+			boolean hasMoreBits = readBit();
+			if(!hasMoreBits)
+				break;
+		}
+		
+		return value;
+	}
+	
 	public double readDouble(boolean signBit, int exponentBits, int mantissaBits)
 	{
 		checkBits(exponentBits, DOUBLE_MAX_EXPONENT_BITS);

@@ -92,6 +92,27 @@ abstract class AbstractOutputBitstream extends Bitstream
 			writeBit( Bits.get(b, x) );
 	}
 	
+	public void writeVLong(long b, int groupSize)
+	{
+		if(groupSize <= 0 || groupSize > 64)
+			throw new RuntimeException("groupSize out of range -- must be 0 <= groupSize < 64, was " +groupSize);
+		
+		while(true)
+		{
+			for(int group = 0; group < groupSize; group++ )
+			{
+				writeBit((b & 0x1) == 1);
+				b >>>= 1;
+			}
+			
+			boolean hasMoreBits = b != 0;
+			writeBit(hasMoreBits);
+			
+			if(!hasMoreBits)
+				break;
+		}
+	}
+	
 	public void writeDouble(double d, boolean signBit, int exponentBits, int mantissaBits)
 	{
 		checkBits(exponentBits, DOUBLE_MAX_EXPONENT_BITS);
