@@ -12,7 +12,7 @@ public class IntTests
 {
 	private static final int maxBits = 32;
 	private final int runLength = (int)Utils.pow2(20);
-	private final TestBitstream stream = new TestBitstream((int)(((long)runLength * maxBits)/8 + 1));
+	private final TestBitstream stream = Utils.testBitstream(runLength * maxBits);
 	
 	@ParameterizedTest
 	@MethodSource("bitsSource")

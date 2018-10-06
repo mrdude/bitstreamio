@@ -28,4 +28,10 @@ class Utils
 			return tmp * tmp * 2;
 		}
 	}
+	
+	static TestBitstream testBitstream(long backingStoreArraySizeInBits)
+	{
+		long bytes = (backingStoreArraySizeInBits/8)+1;
+		return new TestBitstream((int)bytes);
+	}
 }
