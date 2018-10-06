@@ -22,7 +22,7 @@
  */
 package com.prztl.bitstreamio;
 
-abstract class AbstractOutputBitstream extends Bitstream
+public abstract class AbstractOutputBitstream extends Bitstream
 {
 	private long compressedBitsWritten; //the number of bits written
 	

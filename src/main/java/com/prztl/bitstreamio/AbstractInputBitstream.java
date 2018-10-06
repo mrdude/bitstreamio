@@ -22,7 +22,7 @@
  */
 package com.prztl.bitstreamio;
 
-abstract class AbstractInputBitstream extends Bitstream
+public abstract class AbstractInputBitstream extends Bitstream
 {
 	private long compressedBitsRead; //the number of bits read via compressed methods
 	

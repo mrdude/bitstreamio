@@ -1,7 +1,5 @@
 package com.prztl.bitstreamio.tests;
 
-import com.prztl.bitstreamio.BaseInputBitstream;
-import com.prztl.bitstreamio.BaseOutputBitstream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -13,32 +11,68 @@ import java.util.stream.IntStream;
 public class IntTests
 {
 	private static final int maxBits = 32;
+	private final int runLength = (int)Utils.pow2(20);
+	private final TestBitstream stream = new TestBitstream((int)(((long)runLength * maxBits)/8 + 1));
 	
 	@ParameterizedTest
 	@MethodSource("bitsSource")
-	public void testBits(int bits)
+	public void testGroupedWrites(int bits)
 	{
+		//final int runLength = (int)Utils.pow2(20);
+		//final TestBitstream stream = new TestBitstream((runLength * bits)/8 + 1);
+		
+		if(bits < maxBits)
+		{
+			final long maxValue = Utils.pow2(bits);
+			for( int startValue = 0; startValue >= 0 && startValue < maxValue; startValue += runLength )
+			{
+				final int endValue = (int)Math.min(maxValue, startValue + runLength);
+				testRangeOfValues(stream, startValue, endValue, bits);
+			}
+		}
+		else
+		{
+			for( int startValue = Integer.MIN_VALUE; startValue < Integer.MAX_VALUE; startValue += runLength )
+			{
+				final int endValue;
+				if(Integer.MAX_VALUE - startValue < runLength)
+					endValue = Integer.MAX_VALUE;
+				else
+					endValue = startValue + runLength;
+				testRangeOfValues(stream, startValue, endValue,32);
+			}
+		}
+	}
+	
+	@ParameterizedTest
+	@MethodSource("bitsSource")
+	public void testIndividualWrites(int bits)
+	{
+		final TestBitstream stream = new TestBitstream();
+		
 		if(bits < maxBits)
 		{
 			final long maxValue = Utils.pow2(bits);
 			for( int value = 0; value >= 0 && value < maxValue; value++ )
-				testValue(value, bits);
+				testValue(stream, value, bits);
 		}
 		else
 		{
 			for( int value = Integer.MIN_VALUE; value < Integer.MAX_VALUE; value++ )
-				testValue(value, 32);
+				testValue(stream, value, 32);
 		}
 	}
 	
 	@Test
 	public void testNegativeBits()
 	{
+		final TestBitstream stream = new TestBitstream();
+		
 		Assertions.assertThrows(RuntimeException.class, new Executable() {
 			@Override
 			public void execute() throws Throwable
 			{
-				testValue(0, -1);
+				testValue(stream,0,-1);
 			}
 		});
 	}
@@ -46,25 +80,48 @@ public class IntTests
 	@Test
 	public void testInvalidBits()
 	{
+		final TestBitstream stream = new TestBitstream();
+		
 		Assertions.assertThrows(RuntimeException.class, new Executable() {
 			@Override
 			public void execute() throws Throwable
 			{
-				testValue(5, maxBits+1);
+				testValue(stream,5, maxBits+1);
 			}
 		});
 	}
 	
-	private void testValue(int value, int bits)
+	private void testRangeOfValues(final TestBitstream stream, int startValue, int endValue, int bits)
 	{
-		final BaseOutputBitstream out = new BaseOutputBitstream();
-		out.writeInt(value, bits);
-		final byte[] array = out.toByteArray();
+		//writes
+		stream.prepareForWrites();
+		for(int value = startValue; value < endValue; value++)
+			stream.getOutputBitstream().writeInt(value, bits);
+		if(endValue == Integer.MAX_VALUE)
+			stream.getOutputBitstream().writeInt(endValue, bits);
 		
-		final BaseInputBitstream in = new BaseInputBitstream(array);
-		final int actualValue = in.readInt(bits);
+		stream.prepareForReads();
+		for(int expectedValue = startValue; expectedValue < endValue; expectedValue++)
+		{
+			final int actualValue = stream.getInputBitstream().readInt(bits);
+			Assertions.assertEquals(expectedValue, actualValue, "expected: " + expectedValue + ", actualValue: " + actualValue + ", bits: " + bits);
+		}
 		
-		Assertions.assertEquals(value, actualValue, "expected: " +value+ ", actualValue: " +actualValue+ ", bits: " +bits);
+		if(endValue == Integer.MAX_VALUE)
+		{
+			final int actualValue = stream.getInputBitstream().readInt(bits);
+			Assertions.assertEquals(Integer.MAX_VALUE, actualValue, "expected: " + Integer.MAX_VALUE + ", actualValue: " + actualValue + ", bits: " + bits);
+		}
+	}
+	
+	private void testValue(final TestBitstream stream, int value, int bits)
+	{
+		stream.prepareForWrites();
+		stream.getOutputBitstream().writeInt(value, bits);
+		
+		stream.prepareForReads();
+		final int actualValue = stream.getInputBitstream().readInt(bits);
+		Assertions.assertEquals(value, actualValue, "expected: " + value + ", actualValue: " + actualValue + ", bits: " + bits);
 	}
 	
 	static IntStream bitsSource()
