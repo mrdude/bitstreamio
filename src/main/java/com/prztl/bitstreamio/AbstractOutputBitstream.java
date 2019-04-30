@@ -55,7 +55,7 @@ public abstract class AbstractOutputBitstream extends Bitstream
 	
 	public void writeShort(short b, int bits)
 	{
-		checkBits(bits, 8);
+		checkBits(bits, 16);
 		incrementCompressedBitsCounter(bits);
 		
 		for( int x = 0; x < bits; x++ )
