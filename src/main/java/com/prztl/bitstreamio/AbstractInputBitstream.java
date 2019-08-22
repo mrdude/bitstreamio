@@ -118,7 +118,7 @@ public abstract class AbstractInputBitstream extends Bitstream
 		while(true)
 		{
 			for(int group = 0; group < groupSize; group++)
-				value = Bits.set(value, pos++, readBit());
+				value = Bits.set(value, pos++, readBoolean());
 			
 			boolean hasMoreBits = readBit();
 			if(!hasMoreBits)
@@ -164,7 +164,7 @@ public abstract class AbstractInputBitstream extends Bitstream
 		assert maxAbsInteger > 0;
 		
 		//write the sign bit
-		final boolean signBit = readBit();
+		final boolean signBit = readBoolean();
 		
 		//write the integral part
 		final int integral = readInt(Bits.bitsNeeded(maxAbsInteger));

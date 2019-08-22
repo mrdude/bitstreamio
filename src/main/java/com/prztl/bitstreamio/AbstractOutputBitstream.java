@@ -101,7 +101,7 @@ public abstract class AbstractOutputBitstream extends Bitstream
 		{
 			for(int group = 0; group < groupSize; group++ )
 			{
-				writeBit((b & 0x1) == 1);
+				writeBoolean((b & 0x1) == 1);
 				b >>>= 1;
 			}
 			
@@ -149,7 +149,7 @@ public abstract class AbstractOutputBitstream extends Bitstream
 		final double decimal = Math.abs(value) - (double)integral;
 		
 		//write the sign bit
-		writeBit(value < 0);
+		writeBoolean(value < 0);
 		
 		//write the integral part
 		writeInt(integral, Bits.bitsNeeded(maxAbsInteger));
