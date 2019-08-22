@@ -106,7 +106,7 @@ public abstract class AbstractOutputBitstream extends Bitstream
 			}
 			
 			boolean hasMoreBits = b != 0;
-			writeBit(hasMoreBits);
+			writeBoolean(hasMoreBits);
 			
 			if(!hasMoreBits)
 				break;

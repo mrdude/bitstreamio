@@ -120,7 +120,7 @@ public abstract class AbstractInputBitstream extends Bitstream
 			for(int group = 0; group < groupSize; group++)
 				value = Bits.set(value, pos++, readBoolean());
 			
-			boolean hasMoreBits = readBit();
+			boolean hasMoreBits = readBoolean();
 			if(!hasMoreBits)
 				break;
 		}
